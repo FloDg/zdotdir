@@ -1,0 +1,48 @@
+#!/bin/zsh
+
+zparseopts -D -F -- \
+    {m,-mode}:=mode ||
+    return
+
+# Remove the prefix from mode
+mode=${mode[-1]}
+
+# Check the mode is correct, either global, repo or local
+if [[ "$mode" != "global" && "$mode" != "repo" && "$mode" != "local" ]]; then
+    if [[ -z "$mode" ]]; then
+        echo "Mode not specified."
+    else
+        echo "Unknown mode: $mode"
+    fi
+
+    echo "Usage: $0 [-m|--mode] {global|repo|local} [FILES]"
+    return 1
+fi
+
+if [[ "$mode" == "global" ]]; then
+    file=~/.global_gitignore
+
+elif [[ "$mode" == "repo" ]]; then
+    root=$(git rev-parse --show-toplevel)
+    if [ $? -ne 0 ]; then
+        echo "Could not find root of the repository."
+        return
+    fi
+    file="$root"/.gitignore
+
+else
+    root=$(git rev-parse --show-toplevel)
+    if [ $? -ne 0 ]; then
+        echo "Could not find root of the repository."
+        return
+    fi
+    file="$root"/.git/info/exclude
+    mkdir -p "$root"/.git/info
+    touch $file
+fi
+
+echo "Adding files to $file:"
+for w in "$@"; do
+    echo "- $w"
+    echo "$w" >>"$file"
+done

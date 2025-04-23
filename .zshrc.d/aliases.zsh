@@ -4,7 +4,6 @@
 #
 
 # single character aliases - be sparing!
-alias _=sudo
 alias l=ls
 alias g=git
 
@@ -39,3 +38,6 @@ alias please=sudo
 alias zshrc='${EDITOR:-vim} "${ZDOTDIR:-$HOME}"/.zshrc'
 alias zbench='for i in {1..10}; do /usr/bin/time zsh -lic exit; done'
 alias zdot='cd ${ZDOTDIR:-~}'
+alias py='python'
+alias compilers-docker='docker run --rm -it -v "$(pwd):/home/vagrant/compilers" flodg/compilers /bin/sh -c "cd /home/vagrant/compilers; apt-get -qq update; su vagrant"'
+alias vpn='/Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser --incognito https://vpn.uliege.be/mfa'

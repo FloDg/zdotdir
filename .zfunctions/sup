@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# If option, check that it is valid
+zparseopts -D -F -E - {f,-force}=force || return
+
+# First arg is the machine
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 [-f|--force] MACHINE"
+    return 1
+fi
+
+machine=$1
+
+repo=$(git rev-parse --show-toplevel) 2>/dev/null
+ret_code=$?
+if [ $ret_code -ne 0 ]; then
+    echo "Could not find root of the repository."
+    return
+fi
+
+repo=$(basename "$repo")
+
+# Upload to all machines
+if (($#force)); then
+    rsync -vvRat $(git ls-files) "$machine":~/"$repo"
+else
+    rsync -vvRaut $(git ls-files) "$machine":~/"$repo"
+fi

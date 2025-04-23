@@ -1,0 +1,15 @@
+#!/bin/zsh
+zparseopts -D -F -E -- {a,-all}=all || return
+
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 [-a|--all] MACHINE"
+    return 1
+else
+    machine=("$@")
+fi
+
+if (($#all)); then
+    ssh "$machine" "squeue --long"
+else
+    ssh "$machine" 'squeue -u $(whoami) --long'
+fi
